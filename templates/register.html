@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Register — CS Hub{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+    <h1>Create your account</h1>
+    <p class="auth-sub">No email needed — just a name and password.</p>
+
+    <form action="{{ url_for('register') }}" method="POST">
+        <label>
+            Username
+            <input type="text" name="username" maxlength="30" required autofocus autocomplete="off">
+        </label>
+        <label>
+            Password
+            <input type="password" name="password" minlength="4" required>
+        </label>
+        <label>
+            Confirm password
+            <input type="password" name="confirm" minlength="4" required>
+        </label>
+        <button type="submit" class="btn-cozy">Create account</button>
+    </form>
+
+    <p class="auth-switch">
+        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+    </p>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Home — CS Hub{% endblock %}
+
+{% block content %}
+
+{% if visitor_name %}
+<section class="visitor-greeting">
+    <p>👋 Welcome back, <strong>{{ visitor_name }}</strong>! Pick a branch to explore.</p>
+</section>
+{% endif %}
+
+<section class="intro-hero">
+    <div class="intro-emoji">📚</div>
+    <h1>Explore Computer Science</h1>
+    <p class="intro-lead">
+        Three deep branches. Dozens of topics. Every concept explained
+        from first principles.
+    </p>
+</section>
+
+<section class="intro-branches">
+    <h2>Choose your path</h2>
+    <p class="branch-lead">Each branch is a doorway into a rich field of its own.</p>
+    <div class="branch-grid">
+        {% for slug, branch in branches.items() %}
+        <a href="{{ url_for('branch_detail', slug=slug) }}" class="branch-card branch-{{ branch.color }}">
+            <div class="branch-icon">{{ branch.icon }}</div>
+            <h3>{{ branch.title }}</h3>
+            <p>{{ branch.tagline }}</p>
+            <span class="branch-arrow">Explore →</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

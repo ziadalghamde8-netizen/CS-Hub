@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CS Hub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('welcome_page') }}" class="logo">💡 CS Hub</a>
+            <ul class="nav-links">
+                {% if session.username %}
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('topics') }}">All Topics</a></li>
+                    <li><a href="{{ url_for('profile') }}">👤 {{ session.username }}</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('welcome_page') }}">Home</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2025 CS Hub — Learn Computer Science the modern way</p>
+    </footer>
+
+<!-- Back to top button -->
+<button id="backToTop" class="back-to-top" aria-label="Back to top">↑</button>
+
+<!-- Command palette overlay -->
+<div id="cmdOverlay" class="cmd-overlay">
+    <div class="cmd-box">
+        <input id="cmdInput" type="text" placeholder="Search topics, branches, or type a page name... (Esc to close)" autocomplete="off">
+        <ul id="cmdResults" class="cmd-results"></ul>
+        <div class="cmd-footer">
+            <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+            <span><kbd>↵</kbd> open</span>
+            <span><kbd>Esc</kbd> close</span>
+        </div>
+    </div>
+</div>
+
+<!-- Confetti canvas -->
+<canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+<!-- Loader -->
+<div id="pageLoader" class="page-loader">
+    <div class="loader-ring"></div>
+</div>
+
+<script id="cs-hub-data" type="application/json">
+{
+    "topics": [
+        {% for slug, topic in topics.items() %}
+        {"slug": "{{ slug }}", "title": "{{ topic.title }}", "icon": "{{ topic.icon }}", "url": "{{ url_for('topic_detail', slug=slug) }}"}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ],
+    "branches": [
+        {% for slug, branch in branches.items() %}
+        {"slug": "{{ slug }}", "title": "{{ branch.title }}", "icon": "{{ branch.icon }}", "url": "{{ url_for('branch_detail', slug=slug) }}"}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
++</body>
+</html>

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Profile — CS Hub{% endblock %}
+
+{% block content %}
+<section class="profile-header">
+    <div class="profile-avatar">
+        {{ (user_info.display_name or username)[0] | upper }}
+    </div>
+    <h1>{{ user_info.display_name or username }}</h1>
+    <p class="profile-username">@{{ username }}</p>
+    {% if user_info.bio %}
+    <p class="profile-bio">{{ user_info.bio }}</p>
+    {% endif %}
+</section>
+
+<div class="profile-stats">
+    <div class="stat-card">
+        <div class="stat-label">Member for</div>
+        <div class="stat-value">{{ account_age }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Joined</div>
+        <div class="stat-value">{{ user_info.created }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Favorite topic</div>
+        <div class="stat-value">{{ user_info.favorite or "—" }}</div>
+    </div>
+</div>
+
+<section class="profile-section">
+    <h2>Edit profile</h2>
+    <form action="{{ url_for('profile') }}" method="POST" class="profile-form">
+        <input type="hidden" name="action" value="update">
+
+        <label>
+            Display name
+            <input
+                type="text"
+                name="display_name"
+                value="{{ user_info.display_name or username }}"
+                maxlength="40"
+                placeholder="Your display name"
+            >
+        </label>
+
+        <label>
+            Short bio <span class="label-hint">(max 280 characters)</span>
+            <textarea
+                name="bio"
+                maxlength="280"
+                rows="3"
+                placeholder="Tell us a little about yourself..."
+            >{{ user_info.bio }}</textarea>
+        </label>
+
+        <label>
+            Favorite topic
+            <input
+                type="text"
+                name="favorite"
+                value="{{ user_info.favorite }}"
+                maxlength="60"
+                placeholder="e.g., Algorithms, Semiconductors, Signals"
+            >
+        </label>
+
+        <button type="submit" class="btn-cozy">Save changes</button>
+    </form>
+</section>
+
+<section class="profile-section danger-zone">
+    <h2>⚠️ Danger zone</h2>
+    <p>Deleting your account is permanent. All profile data will be removed.</p>
+    <form action="{{ url_for('profile') }}" method="POST" class="profile-form"
+          onsubmit="return confirm('Are you absolutely sure? This cannot be undone.');">
+        <input type="hidden" name="action" value="delete">
+
+        <label>
+            Type <strong>{{ username }}</strong> to confirm
+            <input
+                type="text"
+                name="confirm_delete"
+                placeholder="{{ username }}"
+                autocomplete="off"
+            >
+        </label>
+
+        <button type="submit" class="btn-danger">Delete my account</button>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+users.txt
+visitors.txt
+.vscode/

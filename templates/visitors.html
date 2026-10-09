@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Users — CS Hub{% endblock %}
+
+{% block content %}
+<section class="page-header-cozy">
+    <h1>👥 Registered Users</h1>
+    <p>{{ total }} user{{ 's' if total != 1 else '' }} so far</p>
+</section>
+
+{% if entries %}
+<div class="visitor-list">
+    <table class="visitor-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Username</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ entry.username }}</td>
+                <td>{{ entry.created }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="story-card" style="text-align:center;">
+    <p>No users yet. Be the first to <a href="{{ url_for('register') }}">register</a>!</p>
+</div>
+{% endif %}
+{% endblock %}

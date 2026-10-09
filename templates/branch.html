@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ branch.title }} — CS Hub{% endblock %}
+
+{% block content %}
+
+<nav class="breadcrumbs">
+    <a href="{{ url_for('home') }}">Home</a>
+    <span class="sep">/</span>
+    <span class="current">{{ branch.title }}</span>
+</nav>
+
+<section class="branch-header branch-{{ branch.color }}">
+    <div class="branch-icon-large">{{ branch.icon }}</div>
+    <h1>{{ branch.title }}</h1>
+    <p class="branch-tagline">{{ branch.tagline }}</p>
+
+    <div class="branch-stats">
+        <div class="branch-stat">
+            <div class="branch-stat-value">{{ branch_topics | length }}</div>
+            <div class="branch-stat-label">Topics</div>
+        </div>
+        <div class="branch-stat">
+            <div class="branch-stat-value">∞</div>
+            <div class="branch-stat-label">Curiosity</div>
+        </div>
+        <div class="branch-stat">
+            <div class="branch-stat-value">📚</div>
+            <div class="branch-stat-label">Deep dives</div>
+        </div>
+    </div>
+</section>
+
+<section class="branch-intro">
+    <div class="branch-intro-card">
+        {{ branch.intro | safe }}
+    </div>
+</section>
+
+<section class="branch-topics">
+    <h2>Subtopics in {{ branch.title }}</h2>
+    <div class="grid">
+        {% for slug, topic in branch_topics.items() %}
+        <a href="{{ url_for('topic_detail', slug=slug) }}" class="card">
+            <div class="card-icon">{{ topic.icon }}</div>
+            <h3>{{ topic.title }}</h3>
+            <p>{{ topic.summary }}</p>
+            <span class="card-cta">Read →</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="branch-back">
+    <a href="{{ url_for('home') }}" class="btn-cozy">← Back to home</a>
+</div>
+{% endblock %}

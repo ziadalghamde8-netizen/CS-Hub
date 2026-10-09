@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ topic.title }} — CS Hub{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumbs -->
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="{{ url_for('home') }}">Home</a>
+    {% if branch %}
+        <span class="sep">/</span>
+        <a href="{{ url_for('branch_detail', slug=branch_slug) }}">{{ branch.title }}</a>
+    {% endif %}
+    <span class="sep">/</span>
+    <span class="current">{{ topic.title }}</span>
+</nav>
+
+<article class="topic-article">
+    <header class="topic-header">
+        <div class="topic-icon">{{ topic.icon }}</div>
+        <h1>{{ topic.title }}</h1>
+        <p class="topic-summary">{{ topic.summary }}</p>
+
+        <div class="topic-meta">
+            <span class="meta-pill">📖 {{ topic.content | striptags | length | int }} chars</span>
+            {% if branch %}
+            <span class="meta-pill">🌿 {{ branch.title }}</span>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="topic-layout">
+        <!-- Floating Table of Contents -->
+        <aside class="toc" id="toc">
+            <h3>On this page</h3>
+            <ul id="tocList"></ul>
+        </aside>
+
+        <div class="topic-content" id="topicContent">
+            {{ topic.content | safe }}
+        </div>
+    </div>
+
+    {% if related %}
+    <section class="related-topics">
+        <h2>Continue exploring</h2>
+        <div class="grid">
+            {% for rslug, rtopic in related.items() %}
+            <a href="{{ url_for('topic_detail', slug=rslug) }}" class="card">
+                <div class="card-icon">{{ rtopic.icon }}</div>
+                <h3>{{ rtopic.title }}</h3>
+                <p>{{ rtopic.summary }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <div class="topic-nav">
+        {% if branch %}
+        <a href="{{ url_for('branch_detail', slug=branch_slug) }}" class="btn-cozy">
+            ← Back to {{ branch.title }}
+        </a>
+        {% else %}
+        <a href="{{ url_for('home') }}" class="btn-cozy">← Back to home</a>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

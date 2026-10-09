@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}All Topics — CS Hub{% endblock %}
+
+{% block content %}
+<section class="page-header-cozy">
+    <h1>All Topics</h1>
+    <p>Eight subjects, from algorithms to electrical engineering.</p>
+</section>
+
+<div class="grid">
+    {% for slug, topic in topics.items() %}
+    <a href="{{ url_for('topic_detail', slug=slug) }}" class="card">
+        <div class="card-icon">{{ topic.icon }}</div>
+        <h3>{{ topic.title }}</h3>
+        <p>{{ topic.summary }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

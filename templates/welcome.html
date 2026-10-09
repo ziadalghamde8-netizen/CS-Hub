@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Welcome — CS Hub{% endblock %}
+
+{% block content %}
+<section class="welcome-hero">
+    <div class="welcome-emoji">📚</div>
+    <h1>Welcome to CS Hub</h1>
+    <p class="welcome-lead">
+        A cozy little corner of the internet dedicated to explaining
+        <strong>Computer Science</strong>, <strong>Semiconductors</strong>,
+        and <strong>Electrical Engineering</strong>.
+    </p>
+</section>
+
+<section class="welcome-story">
+    <div class="story-card">
+        <p>
+            This website was made to explain a little about Computer Science,
+            Semiconductors, and Electrical Engineering. I made this website
+            because I am personally interested in these topics and I would
+            like to share my knowledge with other people so they can learn too!
+        </p>
+        <p>
+            Create a free account to explore — it takes just a few seconds.
+        </p>
+    </div>
+</section>
+
+<section class="signin-card">
+    <h2>Get started</h2>
+    <p class="signin-sub">Create an account or sign in to explore.</p>
+    <div class="cta-buttons">
+        <a href="{{ url_for('register') }}" class="btn-cozy">Create account</a>
+        <a href="{{ url_for('login') }}" class="btn-cozy btn-cozy-outline">Sign in</a>
+    </div>
+</section>
+{% endblock %}
