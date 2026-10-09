@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Guestbook — CS Hub{% endblock %}
+
+{% block content %}
+<section class="page-header-cozy">
+    <h1>✍️ Guestbook</h1>
+    <p>{{ total }} message{{ 's' if total != 1 else '' }} so far</p>
+</section>
+
+<div class="guestbook-form">
+    <h2>Leave a message</h2>
+    <form action="{{ url_for('guestbook') }}" method="POST">
+        <label>
+            Your name
+            <input type="text" name="name" maxlength="40" required
+                   value="{{ session.username if session.username else '' }}"
+                   placeholder="Your name">
+        </label>
+        <label>
+            Message <span class="label-hint">(max 280 characters)</span>
+            <textarea name="message" rows="3" maxlength="280" required
+                      placeholder="Say hello, share a thought, recommend a topic..."></textarea>
+        </label>
+        <button type="submit" class="btn-cozy">Post message</button>
+    </form>
+</div>
+
+{% if entries %}
+<div class="guestbook-entries">
+    {% for e in entries %}
+    <div class="guestbook-entry">
+        <div class="guestbook-header">
+            <strong>{{ e.name }}</strong>
+            <span class="guestbook-time">{{ e.timestamp }}</span>
+        </div>
+        <p>{{ e.message }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="story-card" style="text-align:center;">
+    <p>No messages yet. Be the first to sign!</p>
+</div>
+{% endif %}
+{% endblock %}

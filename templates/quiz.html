@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Quiz: {{ topic.title }} — CS Hub{% endblock %}
+
+{% block content %}
+<section class="page-header-cozy">
+    <h1>🧠 Quiz: {{ topic.title }}</h1>
+    <p>Answer {{ questions | length }} questions to test your understanding</p>
+</section>
+
+<div class="quiz-card">
+    <form action="{{ url_for('quiz', slug=slug) }}" method="POST">
+        {% for q in questions %}
+        {% set outer_index = loop.index0 %}
+        <div class="quiz-question">
+            <p class="quiz-q-text"><strong>{{ loop.index }}.</strong> {{ q.q }}</p>
+            <div class="quiz-options">
+                {% for option in q.options %}
+                <label class="quiz-option">
+                    <input type="radio" name="q{{ outer_index }}" value="{{ loop.index0 }}" required>
+                    <span>{{ option }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-cozy">Submit answers</button>
+    </form>
+</div>
+
+<div style="text-align:center; margin-top: 2rem;">
+    <a href="{{ url_for('topic_detail', slug=slug) }}" class="btn-cozy btn-cozy-outline">← Back to topic</a>
+</div>
+{% endblock %}

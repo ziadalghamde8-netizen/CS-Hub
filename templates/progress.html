@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}My Progress — CS Hub{% endblock %}
+
+{% block content %}
+<section class="page-header-cozy">
+    <h1>📊 My Progress</h1>
+    <p>Topics you've marked as read</p>
+</section>
+
+{% for bslug, branch in branches.items() %}
+<section class="progress-branch">
+    <h2>{{ branch.icon }} {{ branch.title }}</h2>
+    <div class="progress-grid">
+        {% for slug in branch.topics %}
+        {% if slug in topics %}
+        <div class="progress-item" data-slug="{{ slug }}">
+            <span class="progress-icon">{{ topics[slug].icon }}</span>
+            <span class="progress-title">{{ topics[slug].title }}</span>
+            <button class="progress-btn" data-slug="{{ slug }}">Mark as read</button>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endfor %}
+
+<script>
+document.querySelectorAll('.progress-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const slug = btn.dataset.slug;
+        const res = await fetch('/api/mark-read/' + slug, { method: 'POST' });
+        if (res.ok) {
+            btn.textContent = '✅ Read';
+            btn.classList.add('marked');
+            btn.disabled = true;
+        }
+    });
+});
+</script>
+{% endblock %}

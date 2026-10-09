@@ -18,16 +18,20 @@
         <div class="nav-container">
             <a href="{{ url_for('welcome_page') }}" class="logo">💡 CS Hub</a>
             <ul class="nav-links">
-                {% if session.username %}
-                    <li><a href="{{ url_for('home') }}">Home</a></li>
-                    <li><a href="{{ url_for('topics') }}">All Topics</a></li>
-                    <li><a href="{{ url_for('profile') }}">👤 {{ session.username }}</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                {% else %}
-                    <li><a href="{{ url_for('welcome_page') }}">Home</a></li>
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('register') }}">Register</a></li>
-                {% endif %}
+    {% if session.username %}
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('topics') }}">Topics</a></li>
+        <li><a href="{{ url_for('progress') }}">📊 Progress</a></li>
+        <li><a href="{{ url_for('guestbook') }}">✍️ Guestbook</a></li>
+        <li><a href="{{ url_for('profile') }}">👤 {{ session.username }}</a></li>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    {% else %}
+        <li><a href="{{ url_for('welcome_page') }}">Home</a></li>
+        <li><a href="{{ url_for('guestbook') }}">Guestbook</a></li>
+        <li><a href="{{ url_for('login') }}">Login</a></li>
+        <li><a href="{{ url_for('register') }}">Register</a></li>
+    {% endif %}
+</ul>
             </ul>
         </div>
     </nav>

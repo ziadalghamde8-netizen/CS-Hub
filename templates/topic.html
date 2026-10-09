@@ -38,6 +38,15 @@
         <div class="topic-content" id="topicContent">
             {{ topic.content | safe }}
         </div>
+                {% if slug in QUIZZES %}
+        <a href="{{ url_for('quiz', slug=slug) }}" class="btn-cozy">🧠 Take a quiz</a>
+        {% endif %}
+        
+            <div class="topic-nav">
+        {% if branch %}
+        <a href="{{ url_for('branch_detail', slug=branch_slug) }}" class="btn-cozy">
+            ← Back to {{ branch.title }}
+        </a>
     </div>
 
     {% if related %}

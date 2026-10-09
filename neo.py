@@ -14,6 +14,125 @@ app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 USERS_FILE = "users.txt"
 VISITORS_FILE = "visitors.txt"
 
+GUESTBOOK_FILE = "guestbook.txt"
+PROGRESS_FILE = "progress.txt"
+
+# ────────────────────────────────────────────────────────────
+# QUIZ DATA — 3 questions per topic
+# ────────────────────────────────────────────────────────────
+QUIZZES = {
+    "algorithms": [
+        {"q": "What is the time complexity of binary search?",
+         "options": ["O(n)", "O(log n)", "O(n²)", "O(1)"], "answer": 1},
+        {"q": "Which algorithm uses a divide-and-conquer approach?",
+         "options": ["Bubble sort", "Linear search", "Merge sort", "Brute force"], "answer": 2},
+        {"q": "What does O(n²) typically indicate?",
+         "options": ["Constant time", "Nested loops", "Logarithmic growth", "Linear time"], "answer": 1},
+    ],
+    "data-structures": [
+        {"q": "Which structure uses LIFO ordering?",
+         "options": ["Queue", "Stack", "Heap", "Tree"], "answer": 1},
+        {"q": "Average lookup time in a hash table?",
+         "options": ["O(n)", "O(log n)", "O(1)", "O(n²)"], "answer": 2},
+        {"q": "Which tree guarantees O(log n) operations?",
+         "options": ["Binary tree", "Linked list", "AVL tree", "Unbalanced BST"], "answer": 2},
+    ],
+    "ai-ml": [
+        {"q": "Which paradigm learns from labeled data?",
+         "options": ["Unsupervised", "Reinforcement", "Supervised", "Self-supervised"], "answer": 2},
+        {"q": "What architecture powers GPT and Claude?",
+         "options": ["CNN", "RNN", "Transformer", "SVM"], "answer": 2},
+        {"q": "What does 'overfitting' mean?",
+         "options": ["Too simple", "Memorizes training data", "Fast training", "Underfitting"], "answer": 1},
+    ],
+    "operating-systems": [
+        {"q": "What does virtual memory allow?",
+         "options": ["Faster CPU", "Larger address space", "More cores", "Better graphics"], "answer": 1},
+        {"q": "What is a deadlock?",
+         "options": ["CPU crash", "Two threads waiting on each other", "Memory leak", "Disk full"], "answer": 1},
+        {"q": "Which scheduler gives each process a time slice?",
+         "options": ["FCFS", "SJF", "Round Robin", "Priority"], "answer": 2},
+    ],
+    "networking": [
+        {"q": "Which protocol is reliable and connection-oriented?",
+         "options": ["UDP", "TCP", "IP", "ICMP"], "answer": 1},
+        {"q": "What does DNS do?",
+         "options": ["Encrypt traffic", "Translate names to IPs", "Route packets", "Assign IPs"], "answer": 1},
+        {"q": "Port 443 is used by?",
+         "options": ["HTTP", "FTP", "HTTPS", "SSH"], "answer": 2},
+    ],
+    "databases": [
+        {"q": "What does ACID stand for?",
+         "options": ["Atomicity, Consistency, Isolation, Durability", "Access, Cache, Index, Data", "Atomic, Clean, Integrated, Distributed", "None"], "answer": 0},
+        {"q": "Which is a NoSQL database?",
+         "options": ["PostgreSQL", "MySQL", "MongoDB", "SQLite"], "answer": 2},
+        {"q": "CAP theorem says you can pick at most?",
+         "options": ["1", "2", "3", "4"], "answer": 1},
+    ],
+    "semiconductor-physics": [
+        {"q": "Silicon's band gap is approximately?",
+         "options": ["0.5 eV", "1.12 eV", "3.4 eV", "5.0 eV"], "answer": 1},
+        {"q": "N-type silicon is doped with an element having?",
+         "options": ["3 valence e⁻", "4 valence e⁻", "5 valence e⁻", "6 valence e⁻"], "answer": 2},
+        {"q": "A P-N junction acts as a?",
+         "options": ["Resistor", "Capacitor", "Diode", "Inductor"], "answer": 2},
+    ],
+    "transistors": [
+        {"q": "Which transistor dominates modern digital chips?",
+         "options": ["BJT", "MOSFET", "JFET", "Thyristor"], "answer": 1},
+        {"q": "CMOS stands for?",
+         "options": ["Common MOS", "Complementary MOS", "Coupled MOS", "Complex MOS"], "answer": 1},
+        {"q": "A MOSFET conducts when voltage is applied to?",
+         "options": ["Source", "Drain", "Gate", "Body"], "answer": 2},
+    ],
+    "quantum-mechanics": [
+        {"q": "What does superposition mean?",
+         "options": ["Two particles collide", "Particle in multiple states", "Wave collapse", "Energy quantization"], "answer": 1},
+        {"q": "Which principle limits knowing position AND momentum?",
+         "options": ["Pauli exclusion", "Uncertainty", "Entanglement", "Complementarity"], "answer": 1},
+        {"q": "Qubits differ from bits because they can be?",
+         "options": ["Faster", "0, 1, or both", "Smaller", "Analog"], "answer": 1},
+    ],
+    "linear-algebra": [
+        {"q": "What does matrix multiplication represent?",
+         "options": ["Addition", "Composition of transformations", "Division", "Sorting"], "answer": 1},
+        {"q": "Eigenvectors represent directions that are?",
+         "options": ["Changed most", "Unchanged by transformation", "Random", "Orthogonal only"], "answer": 1},
+        {"q": "SVD stands for?",
+         "options": ["Simple Vector Decomposition", "Singular Value Decomposition", "Sequential Vector Diagram", "Standard Value Derivation"], "answer": 1},
+    ],
+    "computer-architecture": [
+        {"q": "Which is faster — L1 cache or DRAM?",
+         "options": ["DRAM", "L1 cache", "Same speed", "Depends"], "answer": 1},
+        {"q": "Pipelining improves performance by?",
+         "options": ["Reducing power", "Overlapping instruction stages", "More RAM", "Compression"], "answer": 1},
+        {"q": "ARM is dominant in which market?",
+         "options": ["Servers", "Mobile", "Supercomputers", "Mainframes"], "answer": 1},
+    ],
+    # Add more as you expand
+}
+
+
+def load_guestbook():
+    entries = []
+    if not os.path.exists(GUESTBOOK_FILE):
+        return entries
+    with open(GUESTBOOK_FILE, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if "|" in line:
+                parts = line.split("|", 2)
+                if len(parts) == 3:
+                    entries.append({"timestamp": parts[0], "name": parts[1], "message": parts[2]})
+    return entries
+
+
+def save_guestbook_entry(name, message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    name = name.replace("|", "/").replace("\n", " ")[:40]
+    message = message.replace("|", "/").replace("\n", " ")[:280]
+    with open(GUESTBOOK_FILE, "a", encoding="utf-8") as f:
+        f.write(timestamp + "|" + name + "|" + message + "\n")
 
 TOPICS = {
     # ════════════════════════════════════════════════════════════
@@ -2519,11 +2638,100 @@ def visitors():
     entries.reverse()
     return render_template("visitors.html", entries=entries, total=len(entries))
 
+# ────────────────────────────────────────────────────────────
+# INTERACTIVE ROUTES
+# ────────────────────────────────────────────────────────────
+
+@app.route("/quiz/<slug>", methods=["GET", "POST"])
+def quiz(slug):
+    questions = QUIZZES.get(slug)
+    topic = TOPICS.get(slug)
+    if not questions or not topic:
+        abort(404)
+
+    if request.method == "POST":
+        score = 0
+        results = []
+        for i, q in enumerate(questions):
+            user_answer = request.form.get(f"q{i}")
+            correct = user_answer is not None and int(user_answer) == q["answer"]
+            if correct:
+                score += 1
+            results.append({
+                "question": q["q"],
+                "options": q["options"],
+                "user": int(user_answer) if user_answer is not None else -1,
+                "correct_index": q["answer"],
+                "correct": correct,
+            })
+        return render_template("quiz_results.html", slug=slug, topic=topic, score=score, total=len(questions), results=results)
+
+    return render_template("quiz.html", slug=slug, topic=topic, questions=questions)
+
+
+@app.route("/guestbook", methods=["GET", "POST"])
+def guestbook():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()[:40]
+        message = request.form.get("message", "").strip()[:280]
+        if name and message:
+            save_guestbook_entry(name, message)
+            flash("Thanks for signing the guestbook!", "success")
+        return redirect(url_for("guestbook"))
+
+    entries = load_guestbook()
+    entries.reverse()
+    return render_template("guestbook.html", entries=entries, total=len(entries))
+
+
+@app.route("/random-fact")
+def random_fact():
+    import random
+    slug = random.choice(list(TOPICS.keys()))
+    topic = TOPICS[slug]
+    return redirect(url_for("topic_detail", slug=slug))
+
+
+@app.route("/progress")
+def progress():
+    if "username" not in session:
+        flash("Log in to track your progress.", "warning")
+        return redirect(url_for("login"))
+    return render_template("progress.html", topics=TOPICS, branches=BRANCHES)
+
+
+@app.route("/api/mark-read/<slug>", methods=["POST"])
+def mark_read(slug):
+    if "username" not in session:
+        return {"ok": False, "error": "not logged in"}, 401
+    if slug not in TOPICS:
+        return {"ok": False, "error": "unknown topic"}, 404
+
+    username = session["username"]
+    entries = []
+    if os.path.exists(PROGRESS_FILE):
+        with open(PROGRESS_FILE, "r", encoding="utf-8") as f:
+            entries = [l.strip() for l in f if l.strip()]
+
+    key = username + "::" + slug
+    if key not in entries:
+        entries.append(key)
+        with open(PROGRESS_FILE, "w", encoding="utf-8") as f:
+            f.write("\n".join(entries))
+
+    return {"ok": True, "slug": slug}
 
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
 
+@app.context_processor
+def inject_globals():
+    return {
+        "topics": TOPICS,
+        "branches": BRANCHES,
+        "QUIZZES": QUIZZES,   # ← ADD THIS
+    }
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
